@@ -1,35 +1,64 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+
+import { createPromiseClient } from "@connectrpc/connect";
+import { createConnectTransport } from "@connectrpc/connect-web";
+import { GreetService } from "../gen/greet/v1/greet_connect";
+
+const transport = createConnectTransport({
+  baseUrl: "http://localhost:8080/",
+});
+const client = createPromiseClient(GreetService, transport);
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [inputValue, setInputValue] = useState("");
+  const [messages, setMessages] = useState<
+    {
+      fromMe: boolean;
+      message: string;
+    }[]
+  >([]);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <ol>
+        {messages.map((msg, index) => (
+          <li key={index}>
+            {`${msg.fromMe ? "ME:" : "SERVER:"} ${msg.message}`}
+          </li>
+        ))}
+      </ol>
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault();
+          setInputValue("");
+          setMessages((prev) => [
+            ...prev,
+            {
+              fromMe: true,
+              message: inputValue,
+            },
+          ]);
+          const response = await client.greet({
+            name: inputValue,
+          });
+          setMessages((prev) => [
+            ...prev,
+            {
+              fromMe: false,
+              message: response.greeting,
+            },
+          ]);
+        }}
+      >
+        <input
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+        <button type="submit">Send</button>
+      </form>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

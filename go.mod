@@ -4,6 +4,7 @@ go 1.21.3
 
 require (
 	connectrpc.com/connect v1.11.1
+	github.com/rs/cors v1.10.1
 	golang.org/x/net v0.17.0
 	google.golang.org/grpc v1.58.3
 	google.golang.org/protobuf v1.31.0

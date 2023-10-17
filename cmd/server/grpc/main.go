@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	hellopb "mygrpc/pkg/grpc"
+	hellopb "mygrpc/gen/hello/v1"
 )
 
 type myServer struct {

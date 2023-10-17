@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
-	hellopb "mygrpc/pkg/grpc"
+	hellopb "mygrpc/gen/hello/v1"
 	"os"
 
 	"google.golang.org/grpc"
